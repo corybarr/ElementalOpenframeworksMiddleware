@@ -2,12 +2,14 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
+#include "ofxMidi.h"
 
 // listen on port 12345
 #define PORT 12345
 #define NUM_MSG_STRINGS 20
 
-class testApp : public ofBaseApp{
+class testApp : public ofBaseApp, public ofxMidiListener
+	{
 	public:
 
 		void setup();
@@ -33,4 +35,14 @@ class testApp : public ofBaseApp{
 
 		int				mouseX, mouseY;
 		string			mouseButtonState;
+
+		int port;
+		int id;
+		int value;
+		double timestamp;
+		char msg[255];
+
+		ofxMidiIn	midiIn;
+
+		void newMidiMessage(ofxMidiEventArgs &);
 };

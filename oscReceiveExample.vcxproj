@@ -115,6 +115,9 @@ if not exist "$(ProjectDir)\bin\data" mkdir  "$(ProjectDir)\bin\data"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="addons\ofxMidi\libs\RtMidi.cpp" />
+    <ClCompile Include="addons\ofxMidi\src\ofxMidiIn.cpp" />
+    <ClCompile Include="addons\ofxMidi\src\ofxMidiOut.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\testApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp" />
@@ -123,6 +126,13 @@ if not exist "$(ProjectDir)\bin\data" mkdir  "$(ProjectDir)\bin\data"
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscSender.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="addons\ofxMidi\libs\RtError.h" />
+    <ClInclude Include="addons\ofxMidi\libs\RtMidi.h" />
+    <ClInclude Include="addons\ofxMidi\src\ofxMidi.h" />
+    <ClInclude Include="addons\ofxMidi\src\ofxMidiConstants.h" />
+    <ClInclude Include="addons\ofxMidi\src\ofxMidiEvents.h" />
+    <ClInclude Include="addons\ofxMidi\src\ofxMidiIn.h" />
+    <ClInclude Include="addons\ofxMidi\src\ofxMidiOut.h" />
     <ClInclude Include="src\testApp.h" />
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h" />
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscArg.h" />

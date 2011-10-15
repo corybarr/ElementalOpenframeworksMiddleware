@@ -13,6 +13,12 @@ void testApp::setup(){
 
 	ofBackground( 30, 30, 130 );
 
+	int midiInPort = 0;
+	midiIn.listPorts();
+	cout << "MIDI-in port is " << midiInPort << "\n";
+	midiIn.openPort(midiInPort);
+	midiIn.addListener(this);
+
 }
 
 //--------------------------------------------------------------
@@ -141,4 +147,10 @@ void testApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void testApp::newMidiMessage(ofxMidiEventArgs& args) {
+	//ofxMidiEventArgs.ch
+	int x = 2;
+	int y = x + x;
 }
