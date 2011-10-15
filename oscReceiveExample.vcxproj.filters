@@ -47,5 +47,8 @@
     <Filter Include="addons\ofxOsc\src">
       <UniqueIdentifier>{4986beaf-605c-471a-8870-91ad7967ce90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxMidi">
+      <UniqueIdentifier>{ea1ed54b-f2de-4ede-a818-9349a566203e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
