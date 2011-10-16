@@ -5,6 +5,8 @@ void testApp::setup(){
 	// listen on the given port
 	cout << "listening for osc messages on port " << PORT << "\n";
 	receiver.setup( PORT );
+	cout << "sending osc messages on port " << SENDER_PORT << "\n";
+	sender.setup( HOST, SENDER_PORT );
 
 	current_msg_string = 0;
 	mouseX = 0;
@@ -48,6 +50,7 @@ void testApp::update(){
 		cout << "getAddress: " << m.getAddress() << endl;
 
 		if (m.getAddress() == "/noteon") {
+
 			int noteNumber = m.getArgAsInt32(0);
 			int velocity = m.getArgAsInt32(1);
 			cout << "Note on detected, note: " << noteNumber
@@ -128,7 +131,16 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
-
+	if ( key =='a' || key == 'A' ){
+		cout << "Sending test OSC message\n";
+		ofxOscMessage m;
+		m.setAddress( "/test" );
+		m.addIntArg( 1 );
+		m.addFloatArg( 3.5f );
+		m.addStringArg( "hello" );
+		m.addFloatArg( ofGetElapsedTimef() );
+		sender.sendMessage( m );
+	}
 }
 
 //--------------------------------------------------------------
@@ -174,4 +186,15 @@ void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 	//ofxMidiEventArgs.ch
 	int x = 2;
 	int y = x + x;
+
+	//DEVEL: send a test OSC on MIDI note
+	cout << "Sending test OSC message\n";
+	ofxOscMessage m_test;
+	m_test.setAddress( "/ballcolor" );
+	m_test.addIntArg( 1 );
+	m_test.addFloatArg( 3.5f );
+	m_test.addStringArg( "hello" );
+	m_test.addFloatArg( ofGetElapsedTimef() );
+	sender.sendMessage( m_test );
+
 }
