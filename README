@@ -1,4 +1,4 @@
-This is an openFramework application that recieves and sends OSC and MIDI messages. It was built to collect OSC messages from Unity, convert them to MIDI messages, and pass them on to Ableton Live.
+This is an openFrameworks application that recieves and sends OSC and MIDI messages. It was built to collect OSC messages from Unity, convert them to MIDI messages, and pass them on to Ableton Live.
 
 Future plans include taking MIDI input from any device, wrapping it in OSC, and passing it on to Unity so a MIDI device can alter Unity objects.
 
