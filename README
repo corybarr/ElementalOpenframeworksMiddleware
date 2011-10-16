@@ -1,0 +1,8 @@
+This is an openFramework application that recieves and sends OSC and MIDI messages. It was built to collect OSC messages from Unity, convert them to MIDI messages, and pass them on to Ableton Live.
+
+Future plans include taking MIDI input from any device, wrapping it in OSC, and passing it on to Unity so a MIDI device can alter Unity objects.
+
+To get this working with Unity and Ableton Live on the same computer, a MIDI loopback device must be installed.  This projects was built using LoopBe1, so it's recommended.  The midiOutPort variable must be set to the LoopBe1 MIDI port.  In addition, Ableton needs to be set up to hear MIDI from LoopBe1.
+
+Possible future plans involve generalizing this code to create a more flexible OSC patch bay that can wrap and extract MIDI message from the OSC passed to and from various devices.
+
