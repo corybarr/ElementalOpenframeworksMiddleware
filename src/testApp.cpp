@@ -20,11 +20,11 @@ void testApp::setup(){
 	midiIn.openPort(midiInPort);
 	midiIn.addListener(this);
 
-	int midiOutPort = 1;
+	int midiOutPort = 2;
 	cout << "Listing MIDI out ports:\n";
 	midiOut.listPorts();
 	cout << "MIDI-out port is " << midiOutPort << "\n";
-	midiOut.openPort(1);
+	midiOut.openPort(midiOutPort);
 
 }
 
@@ -44,6 +44,20 @@ void testApp::update(){
 		// get the next message
 		ofxOscMessage m;
 		receiver.getNextMessage( &m );
+
+		cout << "getAddress: " << m.getAddress() << endl;
+
+		if (m.getAddress() == "/noteon") {
+			int noteNumber = m.getArgAsInt32(0);
+			int velocity = m.getArgAsInt32(1);
+			cout << "Note on detected, note: " << noteNumber
+				<< " velocity: " << velocity << endl;
+			midiOut.sendNoteOn (1, noteNumber, velocity);
+		} else {
+			int noteNumber = m.getArgAsInt32(0);
+			cout << "Note off detected, note: " << noteNumber << endl;
+			midiOut.sendNoteOff (1, noteNumber, 0);
+		}
 
 		// check for mouse moved message
 		if ( m.getAddress() == "/mouse/position" )

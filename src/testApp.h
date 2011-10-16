@@ -5,7 +5,7 @@
 #include "ofxMidi.h"
 
 // listen on port 12345
-#define PORT 12345
+#define PORT 57000
 #define NUM_MSG_STRINGS 20
 
 class testApp : public ofBaseApp, public ofxMidiListener
