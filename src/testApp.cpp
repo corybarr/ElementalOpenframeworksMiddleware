@@ -14,10 +14,17 @@ void testApp::setup(){
 	ofBackground( 30, 30, 130 );
 
 	int midiInPort = 0;
+	cout << "Listing MIDI in ports:\n";
 	midiIn.listPorts();
 	cout << "MIDI-in port is " << midiInPort << "\n";
 	midiIn.openPort(midiInPort);
 	midiIn.addListener(this);
+
+	int midiOutPort = 1;
+	cout << "Listing MIDI out ports:\n";
+	midiOut.listPorts();
+	cout << "MIDI-out port is " << midiOutPort << "\n";
+	midiOut.openPort(1);
 
 }
 

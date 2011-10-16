@@ -43,6 +43,7 @@ class testApp : public ofBaseApp, public ofxMidiListener
 		char msg[255];
 
 		ofxMidiIn	midiIn;
+		ofxMidiOut  midiOut;
 
 		void newMidiMessage(ofxMidiEventArgs &);
 };
