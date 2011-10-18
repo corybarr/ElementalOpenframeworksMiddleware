@@ -187,14 +187,24 @@ void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 	int x = 2;
 	int y = x + x;
 
+	int byteOne = args.byteOne;
+	int byteTwo = args.byteTwo;
+
 	//DEVEL: send a test OSC on MIDI note
 	cout << "Sending test OSC message\n";
 	ofxOscMessage m_test;
 	m_test.setAddress( "/ballcolor" );
-	m_test.addIntArg( 1 );
-	m_test.addFloatArg( 3.5f );
-	m_test.addStringArg( "hello" );
-	m_test.addFloatArg( ofGetElapsedTimef() );
+	string message_type;
+	if (args.status == 144) {
+		message_type = "note_on";
+	} else if (args.status == 128) {
+		message_type = "note_off";
+	} else {
+		message_type = "unspecified";
+	}
+	m_test.addStringArg(message_type);
+	m_test.addIntArg( byteOne );
+	m_test.addIntArg( byteTwo );
 	sender.sendMessage( m_test );
 
 }
