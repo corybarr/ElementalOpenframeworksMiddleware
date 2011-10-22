@@ -15,7 +15,7 @@ void testApp::setup(){
 
 	ofBackground( 30, 30, 130 );
 
-	int midiInPort = 0;
+	int midiInPort = 1;
 	cout << "Listing MIDI in ports:\n";
 	midiIn.listPorts();
 	cout << "MIDI-in port is " << midiInPort << "\n";
@@ -189,22 +189,26 @@ void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 
 	int byteOne = args.byteOne;
 	int byteTwo = args.byteTwo;
-
-	//DEVEL: send a test OSC on MIDI note
-	cout << "Sending test OSC message\n";
+	string message_type = "unspecified";
+	
 	ofxOscMessage m_test;
-	m_test.setAddress( "/ballcolor" );
-	string message_type;
-	if (args.status == 144) {
-		message_type = "note_on";
-	} else if (args.status == 128) {
-		message_type = "note_off";
+	m_test.setAddress("/acw");
+	if (args.channel == 15) {
+		m_test.addStringArg("scenechange");
+		if (args.status != 144)
+			return;
+		m_test.addIntArg( byteOne );
 	} else {
-		message_type = "unspecified";
+		m_test.addStringArg("midievent");
+		if (args.status == 144) {
+			message_type = "note_on";
+		} else if (args.status == 128) {
+			message_type = "note_off";
+		}
+		m_test.addStringArg(message_type);
+		m_test.addIntArg( byteOne );
+		m_test.addIntArg( byteTwo );
 	}
-	m_test.addStringArg(message_type);
-	m_test.addIntArg( byteOne );
-	m_test.addIntArg( byteTwo );
+	cout << "Sending OSC message\n";
 	sender.sendMessage( m_test );
-
 }
