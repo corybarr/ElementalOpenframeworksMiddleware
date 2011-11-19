@@ -248,15 +248,24 @@ void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, of
 
 				if (value == 1) {
 
-					sendSceneChangeOSC(i);
+					sendSceneChangeOSC(i - 1);  // !! scene indexing in Unity starts at zero
 				}
 			}
 		}
 
-
 		// use push button 10 for explosion!
 		if (componentTwo == "push10" && m.getArgAsFloat(0) == 1) {
 			sendFXOSC(12, 127);
+		}
+	} else if (componentOne == "3") {
+		// use rotary dials 1-6
+		for (int i = 1; i <= 6; i++) {
+			string s = "rotary" + ofToString(i);
+			if (componentTwo == s) {
+				float value = m.getArgAsFloat(0);
+
+				sendFXOSC(i, (int)(value * 100));
+			}
 		}
 	}
 }
