@@ -55,7 +55,7 @@ class testApp : public ofBaseApp, public ofxMidiListener
 		vector<string> testApp::split(string s, char delim);
 
 		void sendSceneChangeOSC(int sceneNum);
-		void sendEffectsOSC(int sceneNum, int value);
+		void sendFXOSC(int cc, int value);
 		void sendMidiEventOSC(bool noteOn, int noteNumber, int velocity);
 		void dispatchOSCMessage(ofxOscMessage message);
 };

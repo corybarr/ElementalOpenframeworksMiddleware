@@ -240,10 +240,10 @@ void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, of
 
 	if (componentOne == "1") {
 		
-		// use the push buttons for scene changes (there are 9 push buttons in the default layout for 1)
+		// use push buttons 1-9 for scene changes (there are 9 push buttons in the default layout for 1)
 		for (int i = 1; i <= 9; i++) {
-			string s = "/1/push" + ofToString(i);
-			if (m.getAddress() == s) {
+			string s = "push" + ofToString(i);
+			if (componentTwo == s) {
 				float value = m.getArgAsFloat(0);
 
 				if (value == 1) {
@@ -253,6 +253,11 @@ void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, of
 			}
 		}
 
+
+		// use push button 10 for explosion!
+		if (componentTwo == "push10" && m.getArgAsFloat(0) == 1) {
+			sendFXOSC(12, 127);
+		}
 	}
 }
 
@@ -309,12 +314,12 @@ void testApp::sendSceneChangeOSC(int sceneNum) {
 	dispatchOSCMessage(m_test);
 }
 
-void testApp::sendEffectsOSC(int sceneNum, int value) {
+void testApp::sendFXOSC(int cc, int value) {
 	ofxOscMessage m_test;
 	m_test.setAddress(OSCSenderAddressString);
 
 	m_test.addStringArg("fx");
-	m_test.addIntArg (sceneNum);
+	m_test.addIntArg (cc);
 	m_test.addIntArg (value);
 
 	dispatchOSCMessage(m_test);
