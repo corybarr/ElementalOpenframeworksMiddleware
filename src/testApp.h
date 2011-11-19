@@ -51,4 +51,11 @@ class testApp : public ofBaseApp, public ofxMidiListener
 		ofxMidiOut  midiOut;
 
 		void newMidiMessage(ofxMidiEventArgs &);
+		void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, ofxOscMessage m);
+		vector<string> testApp::split(string s, char delim);
+
+		void sendSceneChangeOSC(int sceneNum);
+		void sendEffectsOSC(int sceneNum, int value);
+		void sendMidiEventOSC(bool noteOn, int noteNumber, int velocity);
+		void dispatchOSCMessage(ofxOscMessage message);
 };

@@ -1,4 +1,6 @@
 #include "testApp.h"
+#include <string>
+#include <vector>
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -56,6 +58,22 @@ void testApp::update(){
 
 		cout << "getAddress: " << m.getAddress() << endl;
 
+		// break up the address by path separators
+		vector<string> pathComponents = split(m.getAddress(), '/');
+		string componentOne = "";
+		string componentTwo = "";
+
+		if (pathComponents.size() > 1) {
+			componentOne = pathComponents.at(1);
+		}
+		if (pathComponents.size() > 2) {
+			componentTwo = pathComponents.at(2);
+		}
+		
+		for( size_t i = 0; i < pathComponents.size(); i++){
+			//cout <<  "Path component : " << pathComponents.at(i) << "..." << endl;
+		}
+
 		if (m.getAddress() == "/noteon") {
 
 			int noteNumber = m.getArgAsInt32(0);
@@ -63,6 +81,11 @@ void testApp::update(){
 			cout << "Note on detected, note: " << noteNumber
 				<< " velocity: " << velocity << endl;
 			midiOut.sendNoteOn (1, noteNumber, velocity);
+
+		} else if (componentOne == "1" || componentOne == "2" || componentOne == "3" || componentOne == "4") {
+			
+			handleTouchOSCMessage(componentOne, componentTwo, m);
+		
 		} else {
 			int noteNumber = m.getArgAsInt32(0);
 			cout << "Note off detected, note: " << noteNumber << endl;
@@ -132,8 +155,27 @@ void testApp::draw(){
 		ofDrawBitmapString( msg_strings[i], 10, 40+15*i );
 	}
 
+}
 
-
+vector<string> testApp::split(string s, char delim) {
+        stringstream temp (stringstream::in | stringstream::out);
+        vector<string> elems(0);
+        if(s.size() == 0 || delim == 0)
+            return elems;
+        for each(char c in s)
+        {
+            if(c == delim)
+            {
+                elems.push_back(temp.str());
+                temp = stringstream(stringstream::in | stringstream::out);
+            }
+            else
+                temp << c;
+        }
+    if(temp.str().size() > 0)
+        elems.push_back(temp.str());
+        
+	return elems;
 }
 
 //--------------------------------------------------------------
@@ -189,6 +231,31 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
+void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, ofxOscMessage m) {
+	
+
+	float value = m.getArgAsFloat(0);
+
+	cout << "Touch OSC message:  " << componentOne << ",  " << componentTwo << ",  " << value << endl;
+
+	if (componentOne == "1") {
+		
+		// use the push buttons for scene changes (there are 9 push buttons in the default layout for 1)
+		for (int i = 1; i <= 9; i++) {
+			string s = "/1/push" + ofToString(i);
+			if (m.getAddress() == s) {
+				float value = m.getArgAsFloat(0);
+
+				if (value == 1) {
+
+					sendSceneChangeOSC(i);
+				}
+			}
+		}
+
+	}
+}
+
 void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 	//ofxMidiEventArgs.ch
 	int x = 2;
@@ -227,5 +294,57 @@ void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 	}
 	catch (int e) {
 		cout << "Could not send OSC message to echoSender\n";
+	}
+}
+
+static string OSCSenderAddressString = "/acw";
+
+void testApp::sendSceneChangeOSC(int sceneNum) {
+	ofxOscMessage m_test;
+	m_test.setAddress(OSCSenderAddressString);
+
+	m_test.addStringArg("scenechange");
+	m_test.addIntArg(sceneNum);
+
+	dispatchOSCMessage(m_test);
+}
+
+void testApp::sendEffectsOSC(int sceneNum, int value) {
+	ofxOscMessage m_test;
+	m_test.setAddress(OSCSenderAddressString);
+
+	m_test.addStringArg("fx");
+	m_test.addIntArg (sceneNum);
+	m_test.addIntArg (value);
+
+	dispatchOSCMessage(m_test);
+}
+
+void testApp::sendMidiEventOSC(bool noteOn, int noteNumber, int velocity) {
+	ofxOscMessage m_test;
+	m_test.setAddress(OSCSenderAddressString);
+
+	m_test.addStringArg("midievent");
+
+	string message_type = "note_on";
+	if (!noteOn) {
+		message_type = "note_off";
+	}
+	m_test.addStringArg(message_type);
+
+	m_test.addIntArg( noteNumber );
+	m_test.addIntArg( velocity );
+
+	dispatchOSCMessage(m_test);
+}
+
+void testApp::dispatchOSCMessage(ofxOscMessage message) {
+	cout << "Sending OSC message\n";	
+	try {
+		sender.sendMessage( message );
+		echoSender.sendMessage(message);
+	}
+	catch (int e) {
+		cout << "Could not send OSC message to one of the OSC senders\n";
 	}
 }
