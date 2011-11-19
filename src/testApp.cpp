@@ -7,6 +7,13 @@ void testApp::setup(){
 	receiver.setup( PORT );
 	cout << "sending osc messages on port " << SENDER_PORT << "\n";
 	sender.setup( HOST, SENDER_PORT );
+	try {
+		echoSender.setup( ECHO_HOST, SENDER_PORT);
+	}
+	catch (int e) {
+		cout << "Setting up echoSender failed.";
+		//echoSender = 0; 
+	}
 
 	current_msg_string = 0;
 	mouseX = 0;
@@ -198,6 +205,10 @@ void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 		if (args.status != 144)
 			return;
 		m_test.addIntArg( byteOne );
+	} else if (args.channel == 14) {
+		m_test.addStringArg("fx");
+		m_test.addIntArg (byteOne);
+		m_test.addIntArg (byteTwo);
 	} else {
 		m_test.addStringArg("midievent");
 		if (args.status == 144) {
@@ -211,4 +222,10 @@ void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 	}
 	cout << "Sending OSC message\n";
 	sender.sendMessage( m_test );
+	try {
+		echoSender.sendMessage(m_test);
+	}
+	catch (int e) {
+		cout << "Could not send OSC message to echoSender\n";
+	}
 }

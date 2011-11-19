@@ -9,6 +9,7 @@
 #define SENDER_PORT 57001
 #define NUM_MSG_STRINGS 20
 #define HOST "127.0.0.1"
+#define ECHO_HOST "192.168.0.134"
 
 class testApp : public ofBaseApp, public ofxMidiListener
 	{
@@ -31,6 +32,7 @@ class testApp : public ofBaseApp, public ofxMidiListener
 		ofTrueTypeFont		font;
 		ofxOscReceiver	receiver;
 		ofxOscSender sender;
+		ofxOscSender echoSender;
 
 		int				current_msg_string;
 		string		msg_strings[NUM_MSG_STRINGS];
