@@ -62,6 +62,7 @@ void testApp::update(){
 		vector<string> pathComponents = split(m.getAddress(), '/');
 		string componentOne = "";
 		string componentTwo = "";
+		string componentThree = "";
 
 		if (pathComponents.size() > 1) {
 			componentOne = pathComponents.at(1);
@@ -69,9 +70,8 @@ void testApp::update(){
 		if (pathComponents.size() > 2) {
 			componentTwo = pathComponents.at(2);
 		}
-		
-		for( size_t i = 0; i < pathComponents.size(); i++){
-			//cout <<  "Path component : " << pathComponents.at(i) << "..." << endl;
+		if (pathComponents.size() > 3) {
+			componentThree = pathComponents.at(3);
 		}
 
 		if (m.getAddress() == "/noteon") {
@@ -84,7 +84,7 @@ void testApp::update(){
 
 		} else if (componentOne == "1" || componentOne == "2" || componentOne == "3" || componentOne == "4") {
 			
-			handleTouchOSCMessage(componentOne, componentTwo, m);
+			handleTouchOSCMessage(componentOne, componentTwo, componentThree, m);
 		
 		} else {
 			int noteNumber = m.getArgAsInt32(0);
@@ -231,7 +231,7 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
-void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, ofxOscMessage m) {
+void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, string componentThree, ofxOscMessage m) {
 	
 
 	float value = m.getArgAsFloat(0);
@@ -257,14 +257,45 @@ void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, of
 		if (componentTwo == "push10" && m.getArgAsFloat(0) == 1) {
 			sendFXOSC(12, 127);
 		}
+
+		// use rotary dials 1-11 on beatMachine iPad
+		for (int i = 1; i <= 11; i++) {
+			string s = "rotary" + ofToString(i);
+			if (componentTwo == s) {
+				float value = m.getArgAsFloat(0);
+
+				sendFXOSC(i, (int)(value * 100));
+			}
+		}
 	} else if (componentOne == "3") {
-		// use rotary dials 1-6
+		// rotarys on beatMachine iPhone
 		for (int i = 1; i <= 6; i++) {
 			string s = "rotary" + ofToString(i);
 			if (componentTwo == s) {
 				float value = m.getArgAsFloat(0);
 
 				sendFXOSC(i, (int)(value * 100));
+			}
+		}
+
+		// use pan dials 1-11
+		for (int i = 1; i <= 11; i++) {
+			string s = "par" + ofToString(i);
+			if (componentTwo == s) {
+				float value = m.getArgAsFloat(0);
+
+				sendFXOSC(i, (int)(value * 100));
+			}
+		}
+
+		if (componentTwo == "insertbypass" && componentThree != "") {
+
+			for (int i = 1; i <= 8; i++) {
+				
+				if (componentThree == ofToString(i)) {
+					
+					sendSceneChangeOSC(i - 1);  // !! scene indexing in Unity starts at zero
+				}
 			}
 		}
 	}
