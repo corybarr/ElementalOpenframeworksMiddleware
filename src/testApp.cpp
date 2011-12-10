@@ -2,6 +2,12 @@
 #include <string>
 #include <vector>
 
+
+#define MIDI_NOTE_SCENECHANGE 15
+#define MIDI_NOTE_FX 14
+#define MIDI_STATUS_NOTE_ON 144
+#define MIDI_STATUS_NOTE_OFF 128
+
 //--------------------------------------------------------------
 void testApp::setup(){
 	// listen on the given port
@@ -302,43 +308,18 @@ void testApp::handleTouchOSCMessage(string componentOne, string componentTwo, st
 }
 
 void testApp::newMidiMessage(ofxMidiEventArgs& args) {
-	//ofxMidiEventArgs.ch
-	int x = 2;
-	int y = x + x;
 
 	int byteOne = args.byteOne;
 	int byteTwo = args.byteTwo;
-	string message_type = "unspecified";
-	
-	ofxOscMessage m_test;
-	m_test.setAddress("/acw");
-	if (args.channel == 15) {
-		m_test.addStringArg("scenechange");
-		if (args.status != 144)
+
+	if (args.channel == MIDI_NOTE_SCENECHANGE) {
+		if (args.status != MIDI_STATUS_NOTE_ON)
 			return;
-		m_test.addIntArg( byteOne );
-	} else if (args.channel == 14) {
-		m_test.addStringArg("fx");
-		m_test.addIntArg (byteOne);
-		m_test.addIntArg (byteTwo);
+		sendSceneChangeOSC(byteOne);
+	} else if (args.channel == MIDI_NOTE_FX) {
+		sendFXOSC(byteOne, byteTwo);
 	} else {
-		m_test.addStringArg("midievent");
-		if (args.status == 144) {
-			message_type = "note_on";
-		} else if (args.status == 128) {
-			message_type = "note_off";
-		}
-		m_test.addStringArg(message_type);
-		m_test.addIntArg( byteOne );
-		m_test.addIntArg( byteTwo );
-	}
-	cout << "Sending OSC message\n";
-	sender.sendMessage( m_test );
-	try {
-		echoSender.sendMessage(m_test);
-	}
-	catch (int e) {
-		cout << "Could not send OSC message to echoSender\n";
+		sendMidiEventOSC(args.status, byteOne, byteTwo);
 	}
 }
 
@@ -365,18 +346,20 @@ void testApp::sendFXOSC(int cc, int value) {
 	dispatchOSCMessage(m_test);
 }
 
-void testApp::sendMidiEventOSC(bool noteOn, int noteNumber, int velocity) {
+void testApp::sendMidiEventOSC(int status, int noteNumber, int velocity) {
 	ofxOscMessage m_test;
 	m_test.setAddress(OSCSenderAddressString);
 
 	m_test.addStringArg("midievent");
 
-	string message_type = "note_on";
-	if (!noteOn) {
+	string message_type = "unspecified";
+	if (status == MIDI_STATUS_NOTE_ON) {
+		message_type = "note_on";
+	} else if (status == MIDI_STATUS_NOTE_OFF) {
 		message_type = "note_off";
 	}
-	m_test.addStringArg(message_type);
 
+	m_test.addStringArg(message_type);
 	m_test.addIntArg( noteNumber );
 	m_test.addIntArg( velocity );
 

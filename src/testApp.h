@@ -56,6 +56,6 @@ class testApp : public ofBaseApp, public ofxMidiListener
 
 		void sendSceneChangeOSC(int sceneNum);
 		void sendFXOSC(int cc, int value);
-		void sendMidiEventOSC(bool noteOn, int noteNumber, int velocity);
+		void sendMidiEventOSC(int status, int noteNumber, int velocity);
 		void dispatchOSCMessage(ofxOscMessage message);
 };
