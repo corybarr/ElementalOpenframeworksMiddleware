@@ -5,7 +5,7 @@
 #include "ofxMidi.h"
 
 // listen on port 12345
-#define PORT 57000
+#define RECEIVER_PORT 57000
 #define SENDER_PORT 57001
 #define NUM_MSG_STRINGS 20
 #define HOST "127.0.0.1"

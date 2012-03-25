@@ -2,17 +2,16 @@
 #include <string>
 #include <vector>
 
-
-#define MIDI_NOTE_SCENECHANGE 15
-#define MIDI_NOTE_FX 14
+#define MIDI_SCENECHANGE_CHANNEL 15
+#define MIDI_NOTE_FX_CHANNEL 14
 #define MIDI_STATUS_NOTE_ON 144
 #define MIDI_STATUS_NOTE_OFF 128
 
 //--------------------------------------------------------------
 void testApp::setup(){
 	// listen on the given port
-	cout << "listening for osc messages on port " << PORT << "\n";
-	receiver.setup( PORT );
+	cout << "listening for osc messages on port " << RECEIVER_PORT << "\n";
+	receiver.setup( RECEIVER_PORT );
 	cout << "sending osc messages on port " << SENDER_PORT << "\n";
 	sender.setup( HOST, SENDER_PORT );
 	try {
@@ -49,7 +48,7 @@ void testApp::setup(){
 void testApp::update(){
 
 	// hide old messages
-	for ( int i=0; i<NUM_MSG_STRINGS; i++ )
+	for ( int i=0; i < NUM_MSG_STRINGS; i++ )
 	{
 		if ( timers[i] < ofGetElapsedTimef() )
 			msg_strings[i] = "";
@@ -143,17 +142,19 @@ void testApp::update(){
 	}
 }
 
-
 //--------------------------------------------------------------
 void testApp::draw(){
 
 	string buf;
-	buf = "listening for osc messages on port" + ofToString( PORT );
+	buf = "listening for osc messages on port " + ofToString( RECEIVER_PORT );
 	ofDrawBitmapString( buf, 10, 20 );
 
+	buf = "sending osc messages on port " + ofToString( SENDER_PORT );
+	ofDrawBitmapString( buf, 10, 50 );
+
 	// draw mouse state
-	buf = "mouse: " + ofToString( mouseX, 4) +  " " + ofToString( mouseY, 4 );
-	ofDrawBitmapString( buf, 430, 20 );
+	buf = "Mouse coords via OSC: " + ofToString( mouseX, 4) +  " " + ofToString( mouseY, 4 );
+	ofDrawBitmapString( buf, 400, 20 );
 	ofDrawBitmapString( mouseButtonState, 580, 20 );
 
 	for ( int i=0; i<NUM_MSG_STRINGS; i++ )
@@ -185,7 +186,7 @@ vector<string> testApp::split(string s, char delim) {
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){
+void testApp::keyPressed (int key) {
 	if ( key =='a' || key == 'A' ){
 		cout << "Sending test OSC message\n";
 		ofxOscMessage m;
@@ -312,11 +313,11 @@ void testApp::newMidiMessage(ofxMidiEventArgs& args) {
 	int byteOne = args.byteOne;
 	int byteTwo = args.byteTwo;
 
-	if (args.channel == MIDI_NOTE_SCENECHANGE) {
+	if (args.channel == MIDI_SCENECHANGE_CHANNEL) {
 		if (args.status != MIDI_STATUS_NOTE_ON)
 			return;
 		sendSceneChangeOSC(byteOne);
-	} else if (args.channel == MIDI_NOTE_FX) {
+	} else if (args.channel == MIDI_NOTE_FX_CHANNEL) {
 		sendFXOSC(byteOne, byteTwo);
 	} else {
 		sendMidiEventOSC(args.status, byteOne, byteTwo);
@@ -339,7 +340,7 @@ void testApp::sendFXOSC(int cc, int value) {
 	ofxOscMessage m_test;
 	m_test.setAddress(OSCSenderAddressString);
 
-	m_test.addStringArg("fx");
+	m_test.addStringArg("cc");
 	m_test.addIntArg (cc);
 	m_test.addIntArg (value);
 
